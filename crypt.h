@@ -52,4 +52,8 @@ uint32_t* generateKey();
 // Returns a uint32_t pointer.
 uint32_t* readText(int* n);
 
+uint32_t* transpose(uint32_t* input, int *size);
+
+uint32_t* detranspose(uint32_t* input, int size);
+
 #endif

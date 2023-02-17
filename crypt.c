@@ -86,11 +86,6 @@ uint32_t to_utf32(const char chr[4]) {
     return codep;
 }
 
-
-uint32_t oneTimePad(uint32_t charTxt, uint32_t charKey) {
-    return (charTxt ^ charKey);
-}
-
 uint32_t* generateKey() {
     uint32_t* key = malloc(sizeof(uint32_t)*MAX_ALLOC);
 
@@ -109,6 +104,56 @@ uint32_t* generateKey() {
     return key;
 }
 
+
+uint32_t* transpose(uint32_t* input, int *size) {
+
+    switch ((*size) % 4) {
+        case 3:
+            input[(*size)] = 'x';
+            input[(*size)+1] = '\0';
+            (*size) += 1;
+            break;
+        case 2:
+            input[(*size)] = 'x';
+            input[(*size)+1] = 'x';
+            input[(*size)+2] = '\0';
+            (*size) += 2;
+            break;
+        case 1:
+            input[(*size)] = 'x';
+            input[(*size)+1] = 'x';
+            input[(*size)+2] = 'x';
+            input[(*size)+3] = '\0';
+            (*size) += 3;
+            break;
+        default:
+            break;
+    }
+
+
+    uint32_t trans_array[MAX_ALLOC];
+
+    int k = 0;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j+i < (*size); j += 4) {
+            trans_array[k] = input[j+i];
+            k++;
+        }
+    }
+
+    uint32_t* shift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
+
+    int i = 0;
+    for (i = 0; i < (*size); i++) {
+        shift_arr[i] = trans_array[(i + ((*size) / 4)) % (*size)];
+    }
+
+    return shift_arr;
+}
+
+uint32_t* detranspose(uint32_t* input, int size) {
+
+}
 
 uint32_t* readText(int* n) {
     uint32_t* inputUTF32 = malloc(sizeof(uint32_t) * MAX_ALLOC);

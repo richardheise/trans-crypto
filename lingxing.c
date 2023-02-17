@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     uint32_t* inputUTF32 = alloca(sizeof(uint32_t) * MAX_ALLOC);
 
     // Generating key
-    key = generateKey();
+    // key = generateKey();
 
     int inputSize = 0;
 
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     char encrypt = !strcmp(argv[1], "-c");
 
     if (encrypt) {
-        inputUTF32 = transpose(inputUTF32, inputSize);
+        inputUTF32 = transpose(inputUTF32, &inputSize);
     } else {
         inputUTF32 = detranspose(inputUTF32, inputSize);
     }
