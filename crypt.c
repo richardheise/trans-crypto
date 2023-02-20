@@ -143,8 +143,7 @@ uint32_t* transpose(uint32_t* input, int *size) {
 
     uint32_t* shift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
 
-    int i = 0;
-    for (i = 0; i < (*size); i++) {
+    for (int i = 0; i < (*size); i++) {
         shift_arr[i] = trans_array[(i + ((*size) / 4)) % (*size)];
     }
 
@@ -153,6 +152,14 @@ uint32_t* transpose(uint32_t* input, int *size) {
 
 uint32_t* detranspose(uint32_t* input, int size) {
 
+    uint32_t* unshift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
+
+    int shift = ((*size) / 4)) % (*size);
+    for (int i = 0; i < (*size); i++) {
+        unshift_arr[i] = trans_array[(i + shift];
+    }
+
+    return detras_array;
 }
 
 uint32_t* readText(int* n) {
