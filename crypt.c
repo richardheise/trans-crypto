@@ -109,27 +109,26 @@ uint32_t* transpose(uint32_t* input, int *size) {
 
     switch ((*size) % 4) {
         case 3:
-            input[(*size)] = 'x';
+            input[(*size)] = '~';
             input[(*size)+1] = '\0';
             (*size) += 1;
             break;
         case 2:
-            input[(*size)] = 'x';
-            input[(*size)+1] = 'x';
+            input[(*size)] = '~';
+            input[(*size)+1] = '~';
             input[(*size)+2] = '\0';
             (*size) += 2;
             break;
         case 1:
-            input[(*size)] = 'x';
-            input[(*size)+1] = 'x';
-            input[(*size)+2] = 'x';
+            input[(*size)] = '~';
+            input[(*size)+1] = '~';
+            input[(*size)+2] = '~';
             input[(*size)+3] = '\0';
             (*size) += 3;
             break;
         default:
             break;
     }
-
 
     uint32_t trans_array[MAX_ALLOC];
 
@@ -143,23 +142,49 @@ uint32_t* transpose(uint32_t* input, int *size) {
 
     uint32_t* shift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
 
+    int shift_amount = (*size) / 4;
     for (int i = 0; i < (*size); i++) {
-        shift_arr[i] = trans_array[(i + ((*size) / 4)) % (*size)];
+        shift_arr[i] = trans_array[((i + (shift_amount)) % (*size))];
     }
 
     return shift_arr;
 }
 
-uint32_t* detranspose(uint32_t* input, int size) {
+uint32_t* detranspose(uint32_t* input, int (*size)) {
 
-    uint32_t* unshift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
 
-    int shift = ((*size) / 4)) % (*size);
+    uint32_t unshift_arr[MAX_ALLOC];
+
+    int shift_amount = (*size) / 4;
+    int j = (*size) - (shift_amount);
+
     for (int i = 0; i < (*size); i++) {
-        unshift_arr[i] = trans_array[(i + shift];
+        unshift_arr[i] = input[j % (*size)];
+        j++;
     }
 
-    return detras_array;
+
+    uint32_t* detrans_array = calloc(MAX_ALLOC, sizeof(uint32_t));
+
+    int k = 0;
+    for (int i = 0; i < shift_amount; i++) {
+        for (int j = 0; j+i < (*size); j += (shift_amount)) {
+            detrans_array[k] = unshift_arr[j+i];
+            k++;
+        }
+    }
+
+    for (int i = 0; i < (*size); i++) {
+        if (detrans_array[i] == '~') {
+            for(int j = i; j < (*size); j++) {
+			    detrans_array[j] = detrans_array[j + 1];
+            }
+		(*size) -= 1;
+		i -= 1;	
+        }
+    }
+
+    return detrans_array;
 }
 
 uint32_t* readText(int* n) {

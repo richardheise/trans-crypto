@@ -30,20 +30,18 @@ int main(int argc, char* argv[]) {
 
     if (encrypt) {
         inputUTF32 = transpose(inputUTF32, &inputSize);
-    } else {
-        inputUTF32 = detranspose(inputUTF32, inputSize);
-    }
 
-    for (int i = 0; i < inputSize; i++) {
-        if (encrypt) { // If it's encryption
-
-            // Sum to UTF-32 so the text becomes "japanese"
+        for (int i = 0; i < inputSize; i++) {
             inputUTF32[i] += (0x6122);
-        } else {
+        }
 
-            // Subtraction from UTF-32 so the text is not "japanese" anymore
+    } else {
+        inputSize = inputSize/3;
+        for (int i = 0; i < inputSize; i++) {
             inputUTF32[i] -= (0x6122);
         }
+
+        inputUTF32 = detranspose(inputUTF32, &inputSize);
     }
 
     // Prints output in UTF-8 so terminal can understand it

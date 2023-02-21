@@ -54,6 +54,6 @@ uint32_t* readText(int* n);
 
 uint32_t* transpose(uint32_t* input, int *size);
 
-uint32_t* detranspose(uint32_t* input, int size);
+uint32_t* detranspose(uint32_t* input, int *size);
 
 #endif
