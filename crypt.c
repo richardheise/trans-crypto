@@ -86,27 +86,9 @@ uint32_t to_utf32(const char chr[4]) {
     return codep;
 }
 
-uint32_t* generateKey() {
-    uint32_t* key = malloc(sizeof(uint32_t)*MAX_ALLOC);
-
-    unsigned char date[10];
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-
-    sprintf(date, "%d-%d-%d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
-
-    unsigned char* in;
-    int x = 0;
-    for (in = date; *in != '\0'; in += utf8_len(*in)) {
-        key[x++] = to_utf32(in);
-    }
-
-    return key;
-}
-
-
 uint32_t* transpose(uint32_t* input, int *size) {
 
+    // We have to create a square matrix, so we add chars if needed.
     switch ((*size) % 4) {
         case 3:
             input[(*size)] = '~';
@@ -130,8 +112,12 @@ uint32_t* transpose(uint32_t* input, int *size) {
             break;
     }
 
+    // Allocate a transposition array.
     uint32_t trans_array[MAX_ALLOC];
 
+    // Transpose the array to another array
+    // This is done so we don't need to use a
+    // true matrix, we only map the input out.
     int k = 0;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j+i < (*size); j += 4) {
@@ -140,8 +126,10 @@ uint32_t* transpose(uint32_t* input, int *size) {
         }
     }
 
+    // Allocate a shift array.
     uint32_t* shift_arr = calloc(MAX_ALLOC, sizeof(uint32_t));
 
+    // Shift the array to the right, so it's like reordering the matrix's columns
     int shift_amount = (*size) / 4;
     for (int i = 0; i < (*size); i++) {
         shift_arr[i] = trans_array[((i + (shift_amount)) % (*size))];
@@ -152,7 +140,7 @@ uint32_t* transpose(uint32_t* input, int *size) {
 
 uint32_t* detranspose(uint32_t* input, int (*size)) {
 
-
+    // First we unshift the array.
     uint32_t unshift_arr[MAX_ALLOC];
 
     int shift_amount = (*size) / 4;
@@ -163,7 +151,7 @@ uint32_t* detranspose(uint32_t* input, int (*size)) {
         j++;
     }
 
-
+    // Then we detranspose the array
     uint32_t* detrans_array = calloc(MAX_ALLOC, sizeof(uint32_t));
 
     int k = 0;
@@ -174,6 +162,7 @@ uint32_t* detranspose(uint32_t* input, int (*size)) {
         }
     }
 
+    // We detranspose the array and return it
     for (int i = 0; i < (*size); i++) {
         if (detrans_array[i] == '~') {
             for(int j = i; j < (*size); j++) {
